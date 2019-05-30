@@ -14,9 +14,11 @@ import java.util.ArrayList;
  */
 public class ServicioProductoSingleton {
     
-    protected ArrayList<Producto> listaProductos;
+    private ArrayList<Producto> listaProductos;
     
     public void insertar (Producto p){
+        
+        
         listaProductos.add(p);
     }
     
@@ -26,8 +28,17 @@ public class ServicioProductoSingleton {
         return p;
     }
     
-    public Producto[] obtenerTodos(){
-        return (Producto[]) listaProductos.toArray();
+    public ArrayList<Producto> obtenerTodos(){
+//        Producto producto1 = new Producto();
+//        producto1.setNombre("producto1");
+//        producto1.setPrecio("50");
+//        Producto producto2 = new Producto();
+//        producto2.setNombre("producto2");
+//        producto2.setPrecio("100");
+//        listaProductos.add(producto1);
+//        listaProductos.add(producto2);
+        
+        return listaProductos;
     }
     
     // La única instancia es privada
@@ -37,7 +48,6 @@ public class ServicioProductoSingleton {
     // Podría ser protected si quisiéramos que clase que herede de esta, pueda utilizar esta clase
     private ServicioProductoSingleton(){
         this.listaProductos = new ArrayList<>();
-            
     }
     // La primera vez que se llama al método, se crea la instancia.
     // A partir de ese momento, hasta que la aplicación termine, la instancia seguirá "viva" 

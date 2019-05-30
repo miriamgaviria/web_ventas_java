@@ -1,6 +1,7 @@
 package com.sinensia.api;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,10 +64,15 @@ public class ProductoRestController extends HttpServlet {
         servProd.insertar(producto1);
         servProd.insertar(producto2);
         
+        ArrayList<Producto> listaProductos = servProd.obtenerTodos();
+        JsonArray listaProductosJson = new JsonArray();
+        for (Producto indice : listaProductos){
+            listaProductosJson = new JsonArray(listaProductos(indice));
+        }
+        
+        
         PrintWriter escritorRespuesta = response.getWriter();
-        
         response.setContentType("application/json;charset=UTF-8");
-        
         BufferedReader bufRead = request.getReader();
         StringBuilder textoJson = new StringBuilder();
         for (String lineaJson = bufRead.readLine();
@@ -77,22 +83,9 @@ public class ProductoRestController extends HttpServlet {
         bufRead.close();
         
         Gson gson = new Gson();
-        Array arrayProductos = gson.fromJson(textoJson.toString(), Array.class);
-        
-        String jsonRespuesta = gson.toJson(arrayProductos);
-        escritorRespuesta.println(jsonRespuesta);
-        
-        /*String toJSON(ArrayList<Producto> listaProductos){
-            ArrayList<Producto> listaProductos =new ArrayList<Producto>();
-                Gson productoGson = new Gson();
-            StringBuilder textoJson = new StringBuilder();
-            for (Producto indice : listaProductos){
-                textoJson.append(productoGson.toJson(indice));
-            }
-            return textoJson.toString();
-        }*/
-        
-        //Producto producto = gson.fromJson(textoJson.toString(), Producto.class);
+        Producto producto = gson.fromJson(textoJson.toString(), Producto.class);
+        listaProductos.add(producto);
+                
         
     }
     
