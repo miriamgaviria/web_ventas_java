@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class ServicioProductoSingleton {
     
-    private ArrayList<Producto> listaProductos;
+    protected ArrayList<Producto> listaProductos;
     
     public void insertar (Producto p){
         listaProductos.add(p);

@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -51,16 +53,46 @@ public class ProductoRestController extends HttpServlet {
     protected void doGet(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
+        
         Producto producto1 = new Producto();
         producto1.setNombre("producto1");
         producto1.setPrecio("50");
-        
         Producto producto2 = new Producto();
         producto2.setNombre("producto2");
         producto2.setPrecio("100");
-        
         servProd.insertar(producto1);
         servProd.insertar(producto2);
+        
+        PrintWriter escritorRespuesta = response.getWriter();
+        
+        response.setContentType("application/json;charset=UTF-8");
+        
+        BufferedReader bufRead = request.getReader();
+        StringBuilder textoJson = new StringBuilder();
+        for (String lineaJson = bufRead.readLine();
+                lineaJson != null;
+                lineaJson = bufRead.readLine()) {
+            textoJson.append(lineaJson);
+        }
+        bufRead.close();
+        
+        Gson gson = new Gson();
+        Array arrayProductos = gson.fromJson(textoJson.toString(), Array.class);
+        
+        String jsonRespuesta = gson.toJson(arrayProductos);
+        escritorRespuesta.println(jsonRespuesta);
+        
+        /*String toJSON(ArrayList<Producto> listaProductos){
+            ArrayList<Producto> listaProductos =new ArrayList<Producto>();
+                Gson productoGson = new Gson();
+            StringBuilder textoJson = new StringBuilder();
+            for (Producto indice : listaProductos){
+                textoJson.append(productoGson.toJson(indice));
+            }
+            return textoJson.toString();
+        }*/
+        
+        //Producto producto = gson.fromJson(textoJson.toString(), Producto.class);
         
     }
     
