@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ProductoRestController extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest request,
+    protected void doPut(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
         PrintWriter escritorRespuesta = response.getWriter();
