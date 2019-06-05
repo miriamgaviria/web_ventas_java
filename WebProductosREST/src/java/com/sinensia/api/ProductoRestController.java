@@ -2,10 +2,13 @@ package com.sinensia.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.Character.getType;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -78,7 +81,7 @@ public class ProductoRestController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        setAccessControlHeaders(response);
         //Cogemos el String de Salida
         PrintWriter escritorRespuesta = response.getWriter();
         response.setContentType("application/json;charset=UTF-8");
@@ -90,30 +93,40 @@ public class ProductoRestController extends HttpServlet {
         p1.setPrecio("100");
         servProd.insertar(p1); 
         p2.setNombre("Mesa");
-        p2.setPrecio("100");
+        p2.setPrecio("50");
         servProd.insertar(p2); //Insertamos el producto creado el array de Productos
         /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         Obtenemos el array de objetos Producto y creamos un array de Json
-        Si aqui te da algÃºn problema con el array comprueba que en ServicioProductosSingleton tienes el metodo obtener todos asÃ­:
+        Si da algÃºn problema con el array comprueba que en ServicioProductosSingleton tienes el metodo obtener todos asÃ­:
         
         public ArrayList<Producto> obtenerTodos(){
         return listaProductos;
         }
         
          */
+       
         ArrayList<Producto> listap = servProd.obtenerTodos();
-        JsonArray listaj = new JsonArray();
-
+        JsonArray jsonArray = new JsonArray();
+        System.out.println(p1);
         //Vamos iterando el array de productos y en cada producto lo parseamos a Json y lo aÃ±adimos al array de Json
-        for (Producto p : listap) {
-
+        //for (Producto p : listap) {
+            
             Gson gson = new Gson();
-            String json = gson.toJson(p);
-            listaj.add(json);
-        }
+//            String json = gson.toJson(p);
+//            listaj.add(json);
+            JsonElement element = gson.toJsonTree (listap, new TypeToken<ArrayList<Producto>>() {}.getType());
+            jsonArray = element.getAsJsonArray();
+        //}
         //Una vez finalizado el bucle enviamos el json por el stream de respuesta
-        escritorRespuesta.println(listaj);
+        escritorRespuesta.println(jsonArray);
+        
+        
 
     }
+    
+    private void setAccessControlHeaders(HttpServletResponse resp) {
+      resp.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+      resp.setHeader("Access-Control-Allow-Methods", "GET");
+  }
 
 }
