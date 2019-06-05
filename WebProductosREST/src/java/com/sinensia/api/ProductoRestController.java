@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -14,114 +13,103 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-// Decoradores en forma de anotación. Esto equivale al documento web.xml con las características del proyecto
+/**
+ *
+ * @author Admin
+ */
+//Decoradores en forma de anotaciÃ³n, descriptores de despliegue
 @WebServlet(asyncSupported = true, urlPatterns = "/api/productos")
 public class ProductoRestController extends HttpServlet {
-    
-    private ServicioProductoSingleton servProd;
+
+    private ServicioProductosSingleton servProd;
+
     @Override
-    public void init(){
-        servProd = ServicioProductoSingleton.getInstancia();
+    public void init() {
+        servProd = ServicioProductosSingleton.getInstancia();
     }
 
     @Override
-    protected void doPost(HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         PrintWriter escritorRespuesta = response.getWriter();
-        
         response.setContentType("application/json;charset=UTF-8");
-        
+
         BufferedReader bufRead = request.getReader();
+
         StringBuilder textoJson = new StringBuilder();
-        for (String lineaJson = bufRead.readLine();
-                lineaJson != null;
-                lineaJson = bufRead.readLine()) {
+        for (String lineaJson = bufRead.readLine(); lineaJson != null; lineaJson = bufRead.readLine()) {
             textoJson.append(lineaJson);
         }
         bufRead.close();
-
+        escritorRespuesta.println(textoJson.toString().toUpperCase());
         Gson gson = new Gson();
         Producto producto = gson.fromJson(textoJson.toString(), Producto.class);
 
-        servProd.insertar(producto);
-        
+        System.out.println("<<<<<<" + producto.getNombre());
+
+        ServicioProductosSingleton sps = ServicioProductosSingleton.getInstancia();
+        sps.modificar(producto);
+
         String jsonRespuesta = gson.toJson(producto);
         escritorRespuesta.println(jsonRespuesta);
+
     }
-    
+
     @Override
-    protected void doGet(HttpServletRequest request,
-            HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        Producto producto1 = new Producto();
-        producto1.setNombre("producto1");
-        producto1.setPrecio("50");
-        Producto producto2 = new Producto();
-        producto2.setNombre("producto2");
-        producto2.setPrecio("100");
-        servProd.insertar(producto1);
-        servProd.insertar(producto2);
-        
-        ArrayList<Producto> listaProductos = servProd.obtenerTodos();
-        JsonArray listaProductosJson = new JsonArray();
-        for (Producto indice : listaProductos){
-            listaProductosJson = new JsonArray(listaProductos(indice));
-        }
-        
-        
-        PrintWriter escritorRespuesta = response.getWriter();
-        response.setContentType("application/json;charset=UTF-8");
+
         BufferedReader bufRead = request.getReader();
-        StringBuilder textoJson = new StringBuilder();
-        for (String lineaJson = bufRead.readLine();
-                lineaJson != null;
-                lineaJson = bufRead.readLine()) {
-            textoJson.append(lineaJson);
+        StringBuilder rJson = new StringBuilder();
+        for (String linea = bufRead.readLine(); linea != null; linea = bufRead.readLine()) {
+            rJson.append(linea);
         }
         bufRead.close();
-        
         Gson gson = new Gson();
-        Producto producto = gson.fromJson(textoJson.toString(), Producto.class);
-        listaProductos.add(producto);
-                
-        
-    }
-    
-    @Override
-    protected void doPut(HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+        Producto nuevoP = gson.fromJson(rJson.toString(), Producto.class);
+        servProd.insertar(nuevoP);
+
         PrintWriter escritorRespuesta = response.getWriter();
         response.setContentType("application/json;charset=UTF-8");
-        // 
-        BufferedReader bufRead = request.getReader();
-        StringBuilder textoJson = new StringBuilder();
-        for (String lineaJson = bufRead.readLine();
-                lineaJson != null;
-                lineaJson = bufRead.readLine()) {
-            textoJson.append(lineaJson);
-        }
-        bufRead.close();
 
-        System.out.println(">>>> " + textoJson.toString().toUpperCase());
-
-        Gson gson = new Gson();
-        Producto producto = gson.fromJson(textoJson.toString(), Producto.class);
-
-        System.out.println(">>>> " + producto.getNombre());
-        
-        // Estas dos líneas no funcionan porque utilizamos el método singleton
-        /*producto.setNombre(producto.getNombre().toUpperCase());
-        producto.setPrecio("5000 bolivares");*/
-        
-        // Estas dos líneas no las utilizamos porque instaciamos al comienzo el objeto y no es necesario crearlo más.
-        /*ServicioProductoSingleton sps = ServicioProductoSingleton.getInstancia();
-        sps.modificar(producto);*/
-        servProd.modificar(producto);
-        
-        String jsonRespuesta = gson.toJson(producto);
-        escritorRespuesta.println(jsonRespuesta);
+        String JsonResp = gson.toJson(nuevoP);
+        escritorRespuesta.println(JsonResp);
     }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        //Cogemos el String de Salida
+        PrintWriter escritorRespuesta = response.getWriter();
+        response.setContentType("application/json;charset=UTF-8");
+
+        //Creamos un producto para probar >>>>
+        Producto p1 = new Producto();
+        p1.setNombre("Shin chan");
+        p1.setPrecio("23");
+        servProd.insertar(p1); //Insertamos el producto creado el array de Productos
+        /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        Obtenemos el array de objetos Producto y creamos un array de Json
+        Si aqui te da algÃºn problema con el array comprueba que en ServicioProductosSingleton tienes el metodo obtener todos asÃ­:
+        
+        public ArrayList<Producto> obtenerTodos(){
+        return listaProductos;
+        }
+        
+         */
+        ArrayList<Producto> listap = servProd.obtenerTodos();
+        JsonArray listaj = new JsonArray();
+
+        //Vamos iterando el array de productos y en cada producto lo parseamos a Json y lo aÃ±adimos al array de Json
+        for (Producto p : listap) {
+
+            Gson gson = new Gson();
+            String json = gson.toJson(p);
+            listaj.add(json);
+        }
+        //Una vez finalizado el bucle enviamos el json por el stream de respuesta
+        escritorRespuesta.println(listaj);
+
+    }
+
 }
