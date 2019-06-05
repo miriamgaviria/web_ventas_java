@@ -13,4 +13,5 @@ export class ProductoService {
   getRequest(url: string): Observable<any> {
     return this.http.get(url);
   }
+
 }

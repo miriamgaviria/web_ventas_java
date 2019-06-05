@@ -1,9 +1,9 @@
-<p>
-  
-  Lista productos
-</p>
 
-<p>
-  
+<h2>Lista productos.</h2>
+<ul>
+  <li *ngFor="let producto of result" >Nombre {{producto.nombre}}. Precio {{producto.precio}}</li>
+</ul>
+
+<!--<p>  
   {{result | json}}
-</p>
+</p>-->
