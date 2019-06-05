@@ -85,9 +85,13 @@ public class ProductoRestController extends HttpServlet {
 
         //Creamos un producto para probar >>>>
         Producto p1 = new Producto();
-        p1.setNombre("Shin chan");
-        p1.setPrecio("23");
-        servProd.insertar(p1); //Insertamos el producto creado el array de Productos
+        Producto p2 = new Producto();
+        p1.setNombre("Coche");
+        p1.setPrecio("100");
+        servProd.insertar(p1); 
+        p2.setNombre("Mesa");
+        p2.setPrecio("100");
+        servProd.insertar(p2); //Insertamos el producto creado el array de Productos
         /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         Obtenemos el array de objetos Producto y creamos un array de Json
         Si aqui te da algÃºn problema con el array comprueba que en ServicioProductosSingleton tienes el metodo obtener todos asÃ­:
